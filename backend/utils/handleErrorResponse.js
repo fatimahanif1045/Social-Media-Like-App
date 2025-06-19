@@ -1,11 +1,15 @@
 // Helper function for error responses
-const handleErrorResponse = (res, message, errorCode, errorMessage) => {
-    return res.status(errorCode).json({
+function handleErrorResponse(res, message, status, details) {
+    return res.status(status).json({
         success: false,
         message,
+        data: null,
         error: {
-            CODE: "BAD_REQUEST",
-            MESSAGE: errorMessage
-        }
+            CODE: status === 400 ? 'BAD_REQUEST' : 'UNKNOWN',
+            MESSAGE: details || message,
+            STATUS: status,
+        },
     });
-};
+}
+
+module.exports = handleErrorResponse;

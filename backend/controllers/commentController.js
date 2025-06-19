@@ -1,11 +1,11 @@
 const Comment = require('../models/comment');
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
-const handleErrorResponse = require('../utils/handleErrorResponse'); 
+const handleErrorResponse = require('../utils/handleErrorResponse');
 
 exports.commentVideo = async (req, res) => {
     const { comment, video } = req.body;
-    
+
     // Validate input
     if (!comment || !video) {
         return handleErrorResponse(res, "Comment and video ID are required", 400, "Missing required fields");
@@ -17,7 +17,7 @@ exports.commentVideo = async (req, res) => {
             video,
             user: req.user.id
         }
-    
+
         /*  const dbVideo = await Video.findOne({ _id:video });
           if (!dbVideo) {
               return res.status(400).json({
@@ -59,7 +59,7 @@ exports.commentVideo = async (req, res) => {
 
 // Check comments function
 exports.checkComment = async (req, res) => {
-    const { video } = req.body;
+    const { video } = req.query;
 
     // Validate input
     if (!video) {
@@ -72,29 +72,29 @@ exports.checkComment = async (req, res) => {
     }
 
     try {
-/*
-        let commentVideo = await Comment.find({ video }).populate([
-            { path: "user", select: "name" },
-            { path: "video", select: "type , videoUrl" },
-            {
-                path: "likeComment",
-                populate: { path: "user", select: "name" } 
-            }
-        ]);
-
-        const likeVid = [];
-
-        for (const obj of commentVideo) {
-            // console.log("data", obj?._id);
-            const likeCom = await LikeComment.find({ comment: obj?._id });
-            // console.log("likeCom", likeCom);
-            likeVid.push({ ...obj, likeComment: likeCom }); // Push the updated object to the array
-        }
-
-        console.log("commentVideo", likeVid);
-*/
+        /*
+                let commentVideo = await Comment.find({ video }).populate([
+                    { path: "user", select: "name" },
+                    { path: "video", select: "type , videoUrl" },
+                    {
+                        path: "likeComment",
+                        populate: { path: "user", select: "name" } 
+                    }
+                ]);
+        
+                const likeVid = [];
+        
+                for (const obj of commentVideo) {
+                    // console.log("data", obj?._id);
+                    const likeCom = await LikeComment.find({ comment: obj?._id });
+                    // console.log("likeCom", likeCom);
+                    likeVid.push({ ...obj, likeComment: likeCom }); // Push the updated object to the array
+                }
+        
+                console.log("commentVideo", likeVid);
+        */
         const commentsWithLikes = await Comment.aggregate([
-            { $match: { video: new ObjectId(video) } },  
+            { $match: { video: new ObjectId(video) } },
             {
                 $lookup: {
                     from: 'likecomments',
@@ -144,9 +144,13 @@ exports.checkComment = async (req, res) => {
                 }
             }
         ]);
-            
+        
         if (!commentsWithLikes.length) {
-            return handleErrorResponse(res, "No comments found for this video", 404, "No comments");
+            return res.status(200).json({
+                success: true,
+                data: commentsWithLikes,
+                message: "No comments found for this video",
+            });
         }
 
         res.status(200).json({
@@ -253,28 +257,28 @@ exports.deleteAllComment = async (req, res) => {
             }
         })
     }
-};    
-     
+};
+
 exports.editComment = async (req, res) => {
-    const { id ,comment} = req.body;
+    const { id, comment } = req.body;
     const updateData = req.body;
     try {
-        const commentVideo = await Comment.findOne({ _id:id }).populate('user');
+        const commentVideo = await Comment.findOne({ _id: id }).populate('user');
 
         if (!commentVideo) {
-          return res.status(404).json({
-              success: false,
-              message: "No comment found",
-              error: {
-                CODE: "NO_COMMENT_FOUND",
-                MESSAGE: "No comment found"
-            
-              }
-          });
-      }
+            return res.status(404).json({
+                success: false,
+                message: "No comment found",
+                error: {
+                    CODE: "NO_COMMENT_FOUND",
+                    MESSAGE: "No comment found"
+
+                }
+            });
+        }
 
         if (commentVideo.user.email === req.user.email) {
-            const updatedComment = await Comment.findOneAndUpdate({ _id:id }, updateData, { new: true }).populate('user');
+            const updatedComment = await Comment.findOneAndUpdate({ _id: id }, updateData, { new: true }).populate('user');
             res.status(200).json({
                 success: true,
                 data: {
@@ -301,5 +305,5 @@ exports.editComment = async (req, res) => {
             }
         })
     }
-};      
-   
+};
+
