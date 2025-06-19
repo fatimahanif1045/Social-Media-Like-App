@@ -35,7 +35,7 @@ exports.commentVideo = async (req, res) => {
           }
   */
 
-        const newComment = await new Comment(data).populate('video');
+        const newComment = await new Comment(data).populate('user');
         await newComment.save();
         res.status(201).json({
             success: true,
@@ -218,7 +218,7 @@ exports.deleteComment = async (req, res) => {
 exports.deleteAllComment = async (req, res) => {
     const { video } = req.body;
     try {
-        const deleteComment = await Comment.findOne({ video }).populate('user');
+        const deleteComment = await Comment.findOne({ video });
         if (!deleteComment) {
             return res.status(404).json({
                 success: false,

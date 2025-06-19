@@ -184,7 +184,7 @@ exports.getCurrentUserDetails = async (req, res) => {
         const videos = await Video.find({ user: req.user.id })
 
         for (let video of videos) {
-            const reactionCount = await VideoReact.find({ video: video._id }).count();
+            const reactionCount = await VideoReact.find({ video: video._id }).countDocuments();
 
             totalReacts += reactionCount;
         }
@@ -312,7 +312,7 @@ const generateUpdateObject = (fieldsArray, dataArray) => {
     return updateObject
 }
 
-exports.getAllVideos = async (req, res) => {
+exports.getAllUserVideos = async (req, res) => {
     try {
 
         const videos = await Video.find().populate([
