@@ -73,7 +73,7 @@ exports.uploadVideo = async (req, res) => {
             tag = tag ? tag.split(',').map(item => item.trim()) : [];
         }
 
-        // Content Moderation
+      /*  // Content Moderation
         const moderationResult = await moderateContent(videoPath);
 
         if (!moderationResult.success) {
@@ -84,7 +84,7 @@ exports.uploadVideo = async (req, res) => {
                 message: 'Uploaded content is not allowed (detected restricted content)',
                 details: moderationResult.unsafeFrame
             });
-        }
+        }*/
         let captions;
         if(!description){
             // Generate Captions
