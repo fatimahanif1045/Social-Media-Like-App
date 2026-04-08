@@ -98,7 +98,9 @@ exports.uploadVideo = async (req, res) => {
         if (!fs.existsSync(outputThumbnailPath)) fs.mkdirSync(outputFolder, { recursive: true });
 
         const { thumbnailName } = await generateThumbnail(videoPath, outputThumbnailPath);
+        // remove below comment if want to add watermark to a video
         //const { watermarkedVideoName } = await addWatermark(videoPath, watermarkedVideoPath, watermarkImage);
+        //const { watermarkedVideoName } = await addWatermark(videoPath, `${videoPath}-watermarked.mp4`, watermarkImage);
 
         const newVideo = new Video({
             videoName, thumbnailName, watermarkedVideoName,
@@ -110,6 +112,13 @@ exports.uploadVideo = async (req, res) => {
             success: true,
             data: { video: newVideo },
             message: 'Video uploaded successfully',
+             /*pagination: {
+                    totalVideos,
+                    totalPages: Math.ceil(totalVideos / limit),
+                    currentPage: page,
+                    limit: limit
+                }
+                    */
         });
 
     } catch (err) {

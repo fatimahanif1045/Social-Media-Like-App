@@ -138,6 +138,7 @@ exports.checkComment = async (req, res) => {
                 $project: {
                     comment: 1,
                     user: { $arrayElemAt: ['$userDetails.name', 0] },
+                    userName: { $arrayElemAt: ['$userDetails.userName', 0] }, // Added userName
                     likesCount: { $size: '$likes' },
                     likesDetails: { $map: { input: '$likesDetails', as: 'like', in: '$$like.likedByUsers' } },
                     timestamp: 1
