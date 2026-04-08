@@ -85,6 +85,7 @@ exports.uploadVideo = async (req, res) => {
                 details: moderationResult.unsafeFrame
             });
         }*/
+       
         let captions;
         if(!description){
             // Generate Captions
